@@ -1,0 +1,127 @@
+---
+title: "HuaYangProblemSet10"
+author: "Hua Yang"
+date: "2022-11-29"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+library(car)
+library(ggfortify)
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GBA 5140 Statistics Essentials for Business Analytics
+## Problem Set 10
+## Multiple Linear Regression
+
+
+Problem 1
+Load “Data-UsedCars.csv” into RStudio. This dataset contains attributes of used cars and their price. Write R code for the following tasks. Post your R code and RStudio output (console output) below each task.
+
+
+
+```{r }
+useCars_df<-read.csv("Data-UsedCars.csv")
+```
+
+**1.The value of a used car is measured by its price (in euros). Build a multiple linear regression model with "Price" as the dependent variable, and with the following independent variables (if necessary, please write code to adjust categorical variables in the dataset before running the regression to make sure that the correct value is used as the baseline):**
+**"Age_08_04": car age as of August 2004 in months,quantitative**
+**"Met_Color": whether the car has metal color or not, categorical, use “no” as baseline**
+**“Weight”: car weight, quantitative**
+**“HP”: car horsepower, quantitative**
+**“KM”: car mileage in kilometers, quantitative**
+**“Quaterly_Tax”: car specific quarterly road tax, quantitative**
+**"Fuel_Type": car fuel type, use “Petrol” as baseline****
+```{r }
+#Adjust categorical variables
+#Met_Color set "no" as baseline
+table(useCars_df$Met_Color)
+class(useCars_df$Met_Color)
+levels(useCars_df$Met_Color)
+levels.order<-c("no","yes")
+useCars_df$Met_Color<-factor(useCars_df$Met_Color,levels.order)
+levels(useCars_df$Met_Color)
+#Fuel_Type set "Petrol" as baseline
+table(useCars_df$Fuel_Type)
+class(useCars_df$Fuel_Type)
+levels(useCars_df$Fuel_Type)
+levels.order<-c("Petrol","CNG","Diesel")
+useCars_df$Fuel_Type<-factor(useCars_df$Fuel_Type,levels.order)
+levels(useCars_df$Fuel_Type)
+#Build multiple linear regression
+useCars_lm<-lm(Price~Age_08_04+Met_Color+Weight+HP+KM+Quarterly_Tax+Fuel_Type,
+               data=useCars_df)
+useCars_lm_summary<-summary(useCars_lm)
+print(useCars_lm_summary)
+```
+
+**2.Which independent variables have significant effect on the dependent variable?**
+
+Conclusion: The independent variables "Age_08_04","Weight","HP","KM","Quarterly_Tax", and "Fuel_Type", have significant effect on the dependent variable. 
+
+
+```{r}
+
+```
+
+**3.Explain the effect of independent variable “KM”.**
+
+Conclusion: Holding all else equal, one unit increase of KM is associated with the the price decreases 0.017248
+
+```{r}
+
+```
+
+**4.Explain the effect of independent variable “Fuel_Type”.**
+
+Conclusion: Holding all else equal, compared to Fuel_Type Petrol, being Fuel_Type CNG the Price decreases 2376.156337. compared to Fuel_TypePetrol, being Fuel_Type Diesel the Price decreases 1783.605679
+
+```{r}
+
+```
+**5.Explain the effect of independent variable “Met_Color”.**
+
+Conclusion: Holding all else equal, compared to car no metal color, the car has metal color the Price increases 22.879152.
+
+```{r}
+
+```
+
+**6.What are the model’s R^2 and adjusted R^2? What can you conclude?**
+
+Conclusion: R^2: The percent of variability of the dependent variable that can be explained by the independent variables under a linear relationship. Adjusted R^2: The adjusted compensates for the number of independent variables in the model. In this case, Multiple R-squared:  0.8685,	Adjusted R-squared:  0.8677, we choose adjusted R^2 to explain, we can explain 87% variation is explained by input variabels. Normally, the higher R^2, the more variation is explained by input variabels and better is model.
+```{r}
+
+```
+
+**7.Compute VIF of all independent variables. What can you conclude?**
+
+Conclusion: In this case, we choose GVIF^(1/(2*Df)), the higher the value, the greater the correlation of the variable with other variables
+```{r}
+vif(useCars_lm)
+```
+
+**8.Plot standardized residuals against the fitted values (i.e. estimated values) of dependent variable. What can you conclude?**
+
+Conclusion: The Residual plot shows non-zero mean(possible quandratic relationship between y and an omitted IV)
+
+```{r}
+#Residual Analysis
+useCars_dv_est<-useCars_lm$fitted.values
+useCars_res_std<-rstudent(useCars_lm)
+lb<-min(-3,-max(abs(useCars_res_std)))
+ub<-max(3,max(abs(useCars_res_std)))
+plot(useCars_res_std~useCars_dv_est,pch=19,xlab="Fitted Value of DV",
+     ylab="Standardized Residual",main="Residual Analysis",ylim=c(lb,ub))
+abline(h=-1.5,lty=3)
+abline(h=1.5,lty=3)
+
+#ggplot2 residual plot
+autoplot(useCars_lm)
+```
+
