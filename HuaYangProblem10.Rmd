@@ -108,7 +108,7 @@ vif(useCars_lm)
 
 **8.Plot standardized residuals against the fitted values (i.e. estimated values) of dependent variable. What can you conclude?**
 
-Conclusion: The Residual plot shows non-zero mean(possible quandratic relationship between y and an omitted IV)
+Conclusion: The Residual plot shows non-zero mean(possible quandratic relationship between y and an omitted IV), the blue line shows a above zero for low and high fitted values, indicating that we have not correctly modelled.
 
 ```{r}
 #Residual Analysis
