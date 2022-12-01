@@ -30,3 +30,6 @@ plot(useCars_res_std~useCars_dv_est,pch=19,xlab="Fitted Value of DV",
      ylab="Standardized Residual",main="Residual Analysis",ylim=c(lb,ub))
 abline(h=-1.5,lty=3)
 abline(h=1.5,lty=3)
+
+#ggplot2 residual plot
+autoplot(useCars_lm)
